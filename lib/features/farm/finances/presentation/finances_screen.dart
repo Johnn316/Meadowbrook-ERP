@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/database/drift/app_database.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/currency_utils.dart';
 import '../domain/finance_model.dart';
 
 class FinancesScreen extends StatefulWidget {
@@ -37,9 +38,6 @@ class _FinancesScreenState extends State<FinancesScreen> {
     _items = await AppDatabase.getFarmFinances(widget.farmId);
     setState(() => _loading = false);
   }
-
-  String _formatKsh(double v) =>
-      'Ksh ${v.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
 
   void _showSheet({FinanceModel? existing}) {
     String type = existing?.type ?? 'Income';
@@ -208,14 +206,14 @@ class _FinancesScreenState extends State<FinancesScreen> {
                   ),
                   child: Row(
                     children: [
-                      Expanded(child: _StatCol(label: 'Income', value: _formatKsh(_totalIncome), color: Colors.greenAccent)),
+                      Expanded(child: _StatCol(label: 'Income', value: CurrencyUtils.format(_totalIncome), color: Colors.greenAccent)),
                       Container(width: 1, height: 36, color: Colors.white30),
-                      Expanded(child: _StatCol(label: 'Expenses', value: _formatKsh(_totalExpense), color: Colors.redAccent)),
+                      Expanded(child: _StatCol(label: 'Expenses', value: CurrencyUtils.format(_totalExpense), color: Colors.redAccent)),
                       Container(width: 1, height: 36, color: Colors.white30),
                       Expanded(
                         child: _StatCol(
                           label: 'Net Profit',
-                          value: _formatKsh(_netProfit),
+                          value: CurrencyUtils.format(_netProfit),
                           color: _netProfit >= 0 ? Colors.greenAccent : Colors.redAccent,
                         ),
                       ),
@@ -253,7 +251,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                                 title: Text(item.category, style: GoogleFonts.lato(fontWeight: FontWeight.w600)),
                                 subtitle: Text(item.date, style: GoogleFonts.lato(fontSize: 12, color: AppColors.textSecondary)),
                                 trailing: Text(
-                                  '${isIncome ? '+' : '-'}${_formatKsh(item.amount)}',
+                                  '${isIncome ? '+' : '-'}${CurrencyUtils.format(item.amount)}',
                                   style: GoogleFonts.merriweather(fontSize: 13, fontWeight: FontWeight.bold, color: color),
                                 ),
                                 onTap: () => _showSheet(existing: item),

@@ -3,12 +3,9 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../../features/crm/invoices/domain/invoice_model.dart';
+import '../utils/currency_utils.dart';
 
 class PdfService {
-  static String _formatKsh(double amount) {
-    return 'KES ${amount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
-  }
-
   static Future<void> shareInvoicePdf(InvoiceModel invoice) async {
     final pdf = pw.Document();
 
@@ -185,7 +182,7 @@ class PdfService {
                     pw.Expanded(
                       flex: 2,
                       child: pw.Text(
-                        _formatKsh(invoice.amount),
+                        CurrencyUtils.formatPrecise(invoice.amount),
                         textAlign: pw.TextAlign.right,
                         style: const pw.TextStyle(fontSize: 12),
                       ),
@@ -204,13 +201,13 @@ class PdfService {
                     width: 260,
                     child: pw.Column(
                       children: [
-                        _totalRow('Subtotal', _formatKsh(invoice.amount)),
-                        _totalRow('Amount Paid', _formatKsh(invoice.amountPaid),
+                        _totalRow('Subtotal', CurrencyUtils.formatPrecise(invoice.amount)),
+                        _totalRow('Amount Paid', CurrencyUtils.formatPrecise(invoice.amountPaid),
                             valueColor: PdfColor.fromHex('#059669')),
                         pw.Divider(color: PdfColor.fromHex('#D1D5DB')),
                         _totalRow(
                           'Outstanding',
-                          _formatKsh(outstanding),
+                          CurrencyUtils.formatPrecise(outstanding),
                           bold: true,
                           valueColor: outstanding > 0
                               ? PdfColor.fromHex('#DC2626')

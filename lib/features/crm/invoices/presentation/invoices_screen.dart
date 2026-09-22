@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/services/pdf_service.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/currency_utils.dart';
 import '../data/invoices_provider.dart';
 import '../domain/invoice_model.dart';
 
@@ -49,10 +50,6 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
     }
   }
 
-  String _formatAmount(double amount) {
-    return 'Ksh ${amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<InvoicesProvider>();
@@ -69,7 +66,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                 Expanded(
                   child: _SummaryCard(
                     label: 'Total Invoiced',
-                    value: _formatAmount(provider.totalAmount),
+                    value: CurrencyUtils.format(provider.totalAmount),
                     color: AppColors.primary,
                     icon: Icons.receipt_long,
                   ),
@@ -78,7 +75,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                 Expanded(
                   child: _SummaryCard(
                     label: 'Collected',
-                    value: _formatAmount(provider.totalPaid),
+                    value: CurrencyUtils.format(provider.totalPaid),
                     color: AppColors.success,
                     icon: Icons.check_circle_outline,
                   ),
@@ -87,7 +84,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                 Expanded(
                   child: _SummaryCard(
                     label: 'Outstanding',
-                    value: _formatAmount(provider.totalOutstanding),
+                    value: CurrencyUtils.format(provider.totalOutstanding),
                     color: AppColors.error,
                     icon: Icons.pending_outlined,
                   ),
@@ -157,7 +154,6 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                           return _InvoiceCard(
                             invoice: invoice,
                             statusColor: _statusColor(invoice.status),
-                            formatAmount: _formatAmount,
                             onTap: () => _showEditInvoiceSheet(context, invoice),
                           );
                         },
@@ -445,13 +441,11 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
 class _InvoiceCard extends StatelessWidget {
   final InvoiceModel invoice;
   final Color statusColor;
-  final String Function(double) formatAmount;
   final VoidCallback onTap;
 
   const _InvoiceCard({
     required this.invoice,
     required this.statusColor,
-    required this.formatAmount,
     required this.onTap,
   });
 
@@ -558,7 +552,7 @@ class _InvoiceCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Paid: ${formatAmount(invoice.amountPaid)}',
+                  'Paid: ${CurrencyUtils.format(invoice.amountPaid)}',
                   style: GoogleFonts.lato(
                     fontSize: 12,
                     color: AppColors.success,
@@ -566,7 +560,7 @@ class _InvoiceCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Total: ${formatAmount(invoice.amount)}',
+                  'Total: ${CurrencyUtils.format(invoice.amount)}',
                   style: GoogleFonts.merriweather(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,

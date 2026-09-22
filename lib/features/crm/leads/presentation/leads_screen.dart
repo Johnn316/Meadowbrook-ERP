@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/currency_utils.dart';
 import '../data/leads_provider.dart';
 import '../domain/lead_model.dart';
 
@@ -98,7 +99,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                         ),
                       ),
                       Text(
-                        _formatKsh(totalValue),
+                        CurrencyUtils.format(totalValue),
                         style: GoogleFonts.merriweather(
                           color: Colors.white,
                           fontSize: 22,
@@ -491,9 +492,6 @@ class _LeadsScreenState extends State<LeadsScreen> {
     );
   }
 
-  String _formatKsh(double amount) {
-    return 'Ksh ${amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
-  }
 }
 
 // ─── WIDGETS ──────────────────────────────────────────────────────────────────
@@ -592,7 +590,7 @@ class _LeadCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Ksh ${lead.value.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
+                  CurrencyUtils.format(lead.value),
                   style: GoogleFonts.merriweather(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,

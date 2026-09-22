@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/currency_utils.dart';
 import '../../crm/contacts/data/contacts_provider.dart';
 import '../../crm/invoices/data/invoices_provider.dart';
 import '../../crm/leads/data/leads_provider.dart';
@@ -25,10 +26,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context.read<InvoicesProvider>().loadInvoices();
       context.read<FarmsProvider>().loadFarms();
     });
-  }
-
-  String _formatKsh(double amount) {
-    return 'Ksh ${amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
   }
 
   @override
@@ -96,14 +93,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Expanded(
                           child: _HeaderStat(
                             label: 'Total Invoiced',
-                            value: _formatKsh(invoices.totalAmount),
+                            value: CurrencyUtils.format(invoices.totalAmount),
                           ),
                         ),
                         Container(width: 1, height: 40, color: Colors.white30),
                         Expanded(
                           child: _HeaderStat(
                             label: 'Outstanding',
-                            value: _formatKsh(invoices.totalOutstanding),
+                            value: CurrencyUtils.format(invoices.totalOutstanding),
                             valueColor: Colors.orangeAccent,
                           ),
                         ),
@@ -111,7 +108,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Expanded(
                           child: _HeaderStat(
                             label: 'Collected',
-                            value: _formatKsh(invoices.totalPaid),
+                            value: CurrencyUtils.format(invoices.totalPaid),
                             valueColor: Colors.greenAccent,
                           ),
                         ),
@@ -229,7 +226,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Ksh ${lead.value.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
+                              CurrencyUtils.format(lead.value),
                               style: GoogleFonts.lato(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -299,7 +296,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              _formatKsh(inv.amount),
+                              CurrencyUtils.format(inv.amount),
                               style: GoogleFonts.lato(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,

@@ -110,12 +110,11 @@ lib/
 ├── main.dart                  # DB init + provider registration
 ├── app.dart                   # MaterialApp, theming, home = MainShell
 ├── core/
-│   ├── constants/             # counties, crops, statuses; API endpoint list
+│   ├── constants/             # counties, crops, lead statuses, currency codes
 │   ├── database/drift/        # AppDatabase — sqflite schema + all CRUD
 │   ├── services/              # pdf_service, xml_service
 │   ├── theme/                 # colors, typography, light/dark themes, provider
-│   ├── network/               # empty stubs
-│   └── utils/                 # empty stubs
+│   └── utils/                 # currency_utils — shared KES formatting
 ├── features/
 │   ├── auth/                  # login screen (not wired into navigation)
 │   ├── crm/
@@ -124,14 +123,15 @@ lib/
 │   │   └── invoices/
 │   ├── farm/
 │   │   ├── farms/             # list + detail hub + weather
-│   │   ├── crops/  livestock/  equipment/  finances/
-│   │   └── dashboard/         # hardcoded mockup, not routed
+│   │   └── crops/  livestock/  equipment/  finances/
 │   ├── dashboard/
 │   └── settings/
-└── shared/
-    ├── widgets/app_drawer.dart   # MainShell: app bar + drawer + bottom nav
-    └── services/                 # empty stub
+└── shared/widgets/app_drawer.dart   # MainShell: app bar + drawer + bottom nav
 ```
+
+Currency formatting lives in one place — `CurrencyUtils.format` for on-screen
+values (`Ksh 150,000`) and `CurrencyUtils.formatPrecise` for PDF invoices
+(`KES 150,000.00`), both reading their symbols from `AppConstants`.
 
 Each feature follows `domain/` (model) → `data/` (provider) →
 `presentation/` (screens), though only the CRM features and `farms` have the
@@ -143,24 +143,21 @@ side drawer. There's no router package; sub-screens use `Navigator.push`.
 
 ### Known gaps
 
-Being upfront about what's scaffolding rather than working code:
+Being upfront about what isn't finished:
 
-- **Empty files:** `core/database/drift/dao/*`, `core/database/sync/sync_manager.dart`,
-  `core/network/*`, `core/utils/*`, all three `*_repository.dart`,
-  `shared/services/connectivity_service.dart`, `shared/widgets/stat_card.dart`,
-  `shared/widgets/sync_indicator.dart`, `features/auth/domain/user_model.dart`.
-- `core/constants/api_constants.dart` defines a full set of PHP endpoint URLs
-  against a placeholder domain, but no HTTP client exists to call them. There
-  is no server-side sync.
+- There is **no server-side sync**. Moving data between devices means
+  exporting XML and importing it on the other side.
 - `login_screen.dart` is fully built (with a fake 2-second delay and no
   credential check) but the app boots straight to `MainShell` — it's never
-  shown.
-- `farm_dashboard_screen.dart` is ~570 lines of UI driven entirely by
-  hardcoded sample maps. It's a mockup, and it isn't routed from anywhere.
+  shown. There is no authentication.
 - "New Lead" and "Invoice" buttons on the contact detail screen are empty
   callbacks.
 - Forms validate with ad-hoc `trim().isEmpty` guards rather than `Form` /
-  `TextFormField` validators.
+  `TextFormField` validators, and amount fields fall back to `0.0` on
+  unparseable input instead of rejecting it.
+- Modal bottom sheets create `TextEditingController`s that are never disposed.
+- Database calls are largely unguarded — there's no error handling around
+  `sqflite` failures.
 - `test/` contains one placeholder assertion. There are no real tests.
 
 ---
