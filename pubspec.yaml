@@ -1,0 +1,76 @@
+name: farm_app_thomas
+description: Modular ERP with CRM and Farm Management for Kenya
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Database - SQLite (local, no code generation required)
+  sqflite: ^2.3.0
+  # sqflite_common_ffi and sqlite3_flutter_libs are desktop-only (Windows/Linux/macOS).
+  # They require sqlite3 3.x which uses download hooks that fail without internet.
+  # Re-enable when building for desktop after VS C++ tools are installed.
+  # sqflite_common_ffi: ^2.3.0
+  # sqlite3_flutter_libs: ^0.6.0
+  path_provider: ^2.1.1
+  path: ^1.8.3
+
+  # HTTP / API
+  http: ^1.1.0
+
+  # State Management
+  provider: ^6.1.1
+
+  # UI
+  cupertino_icons: ^1.0.6
+  google_fonts: ^6.1.0
+  fl_chart: ^0.66.0
+
+  # Connectivity
+  connectivity_plus: ^5.0.2
+
+  # Utils
+  intl: ^0.18.1
+  uuid: ^4.2.1
+  shared_preferences: ^2.2.2
+
+  # XML export / import
+  xml: ^6.5.0
+  file_picker: ^8.1.2
+  share_plus: ^7.2.1
+
+  # Call / SMS quick actions
+  url_launcher: ^6.2.6
+
+  # PDF invoice export
+  pdf: ^3.10.8
+  printing: ^5.12.0
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/logo.jpeg"
+  min_sdk_android: 21
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  # drift_dev: ^2.20.0
+  build_runner: ^2.4.7
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/
+  # fonts:
+    # - family: AppFont
+      # fonts:
+        # - asset: assets/fonts/

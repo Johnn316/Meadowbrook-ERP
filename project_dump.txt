@@ -1,0 +1,3213 @@
+﻿
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\app.dart ==========
+import 'package:flutter/material.dart';
+import 'core/theme/app_theme.dart';
+import 'features/auth/presentation/login_screen.dart';
+
+class ErpApp extends StatelessWidget {
+  const ErpApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Meadowbrook ERP',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      home: const LoginScreen(),
+    );
+  }
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\main.dart ==========
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'app.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    MultiProvider(
+      providers: [
+        // Providers will be added here as we build each module
+      ],
+      child: const ErpApp(),
+    ),
+  );
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\constants\api_constants.dart ==========
+class ApiConstants {
+  // Base URL - replace with your actual PHP API server
+  static const String baseUrl = 'https://yourdomain.com/api';
+
+  // Auth Endpoints
+  static const String login = '$baseUrl/auth/login.php';
+  static const String logout = '$baseUrl/auth/logout.php';
+  static const String refreshToken = '$baseUrl/auth/refresh.php';
+
+  // CRM - Contacts
+  static const String contacts = '$baseUrl/crm/contacts.php';
+  static const String contactCreate = '$baseUrl/crm/contacts/create.php';
+  static const String contactUpdate = '$baseUrl/crm/contacts/update.php';
+  static const String contactDelete = '$baseUrl/crm/contacts/delete.php';
+
+  // CRM - Leads
+  static const String leads = '$baseUrl/crm/leads.php';
+  static const String leadCreate = '$baseUrl/crm/leads/create.php';
+  static const String leadUpdate = '$baseUrl/crm/leads/update.php';
+  static const String leadDelete = '$baseUrl/crm/leads/delete.php';
+
+  // CRM - Invoices
+  static const String invoices = '$baseUrl/crm/invoices.php';
+  static const String invoiceCreate = '$baseUrl/crm/invoices/create.php';
+  static const String invoiceUpdate = '$baseUrl/crm/invoices/update.php';
+  static const String invoiceDelete = '$baseUrl/crm/invoices/delete.php';
+
+  // Farm - Crops
+  static const String crops = '$baseUrl/farm/crops.php';
+  static const String cropCreate = '$baseUrl/farm/crops/create.php';
+  static const String cropUpdate = '$baseUrl/farm/crops/update.php';
+  static const String cropDelete = '$baseUrl/farm/crops/delete.php';
+
+  // Farm - Livestock
+  static const String livestock = '$baseUrl/farm/livestock.php';
+  static const String livestockCreate = '$baseUrl/farm/livestock/create.php';
+  static const String livestockUpdate = '$baseUrl/farm/livestock/update.php';
+  static const String livestockDelete = '$baseUrl/farm/livestock/delete.php';
+
+  // Farm - Equipment
+  static const String equipment = '$baseUrl/farm/equipment.php';
+  static const String equipmentCreate = '$baseUrl/farm/equipment/create.php';
+  static const String equipmentUpdate = '$baseUrl/farm/equipment/update.php';
+  static const String equipmentDelete = '$baseUrl/farm/equipment/delete.php';
+
+  // Sync
+  static const String syncPush = '$baseUrl/sync/push.php';
+  static const String syncPull = '$baseUrl/sync/pull.php';
+  static const String syncStatus = '$baseUrl/sync/status.php';
+
+  // Headers
+  static const Map<String, String> defaultHeaders = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+
+  static Map<String, String> authHeaders(String token) => {
+    ...defaultHeaders,
+    'Authorization': 'Bearer $token',
+  };
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\constants\app_constants.dart ==========
+class AppConstants {
+  // App Info
+  static const String appName = 'Meadowbrook ERP';
+  static const String appVersion = '1.0.0';
+  static const String appTagline = 'Smart Farming & Business Management';
+
+  // Modules
+  static const String moduleCRM = 'CRM';
+  static const String moduleFarm = 'Farm';
+  static const String moduleFinance = 'Finance';
+  static const String moduleEquipment = 'Equipment';
+
+  // CRM
+  static const List<String> leadStatuses = [
+    'New',
+    'Contacted',
+    'Qualified',
+    'Proposal',
+    'Won',
+    'Lost',
+  ];
+
+  static const List<String> contactTypes = [
+    'Farmer',
+    'Supplier',
+    'Buyer',
+    'Partner',
+    'Other',
+  ];
+
+  // Farm - Kenya specific
+  static const List<String> kenyanCrops = [
+    'Maize',
+    'Tea',
+    'Coffee',
+    'Wheat',
+    'Rice',
+    'Sugarcane',
+    'Beans',
+    'Potatoes',
+    'Tomatoes',
+    'Avocado',
+    'Soybeans',
+    'Sorghum',
+  ];
+
+  static const List<String> kenyanLivestock = [
+    'Cattle',
+    'Sheep',
+    'Goats',
+    'Pigs',
+    'Chickens',
+    'Ducks',
+    'Rabbits',
+    'Camels',
+  ];
+
+  static const List<String> kenyanCounties = [
+    'Nairobi',
+    'Kiambu',
+    'Nakuru',
+    'Meru',
+    'Nyeri',
+    'Kakamega',
+    'Kisumu',
+    'Uasin Gishu',
+    'Machakos',
+    'Kilifi',
+    'Mombasa',
+    'Other',
+  ];
+
+  // Currency
+  static const String currency = 'KES';
+  static const String currencySymbol = 'Ksh';
+
+  // Sync
+  static const int syncIntervalMinutes = 15;
+  static const int apiTimeoutSeconds = 30;
+
+  // Pagination
+  static const int pageSize = 20;
+
+  // Local Storage Keys
+  static const String keyUserId = 'user_id';
+  static const String keyUserName = 'user_name';
+  static const String keyAuthToken = 'auth_token';
+  static const String keyLastSync = 'last_sync';
+  static const String keyThemeMode = 'theme_mode';
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\database\drift\app_database.dart ==========
+// Database temporarily disabled until build_runner SSL issue is resolved
+// Full Drift implementation will be restored after SSL fix
+
+class AppDatabase {
+  // Placeholder - will be replaced with full Drift implementation
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\database\drift\dao\contacts_dao.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\database\drift\dao\crops_dao.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\database\drift\dao\invoices_dao.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\database\drift\dao\leads_dao.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\database\drift\dao\livestock_dao.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\database\sync\sync_manager.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\network\api_client.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\network\sync_service.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\theme\app_colors.dart ==========
+import 'package:flutter/material.dart';
+
+class AppColors {
+  // Primary - Earthy Green (Kenya farmland inspired)
+  static const Color primary = Color(0xFF2D6A4F);
+  static const Color primaryLight = Color(0xFF52B788);
+  static const Color primaryDark = Color(0xFF1B4332);
+
+  // Secondary - Warm Amber (soil/harvest)
+  static const Color secondary = Color(0xFFE9A825);
+  static const Color secondaryLight = Color(0xFFF4C95D);
+  static const Color secondaryDark = Color(0xFFB07D11);
+
+  // Neutrals
+  static const Color background = Color(0xFFF8F9FA);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color cardBg = Color(0xFFF1F3F0);
+
+  // Text
+  static const Color textPrimary = Color(0xFF1C1C1E);
+  static const Color textSecondary = Color(0xFF6C757D);
+  static const Color textLight = Color(0xFFADB5BD);
+
+  // Status
+  static const Color success = Color(0xFF40916C);
+  static const Color warning = Color(0xFFF4A261);
+  static const Color error = Color(0xFFE63946);
+  static const Color info = Color(0xFF4895EF);
+
+  // Dark theme
+  static const Color darkBackground = Color(0xFF121212);
+  static const Color darkSurface = Color(0xFF1E1E1E);
+  static const Color darkCard = Color(0xFF2C2C2C);
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\theme\app_theme.dart ==========
+import 'package:flutter/material.dart';
+import 'app_colors.dart';
+import 'app_typography.dart';
+
+class AppTheme {
+  static ThemeData get lightTheme => ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.light(
+      primary: AppColors.primary,
+      secondary: AppColors.secondary,
+      surface: AppColors.surface,
+      error: AppColors.error,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
+      onSurface: AppColors.textPrimary,
+    ),
+    scaffoldBackgroundColor: AppColors.background,
+    textTheme: AppTypography.textTheme,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.primary,
+      foregroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: false,
+    ),
+    cardTheme: CardThemeData(
+      color: AppColors.surface,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.cardBg,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: AppColors.primary, width: 2),
+      ),
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: AppColors.surface,
+      selectedItemColor: AppColors.primary,
+      unselectedItemColor: AppColors.textLight,
+      type: BottomNavigationBarType.fixed,
+      elevation: 8,
+    ),
+  );
+
+  static ThemeData get darkTheme => ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.dark(
+      primary: AppColors.primaryLight,
+      secondary: AppColors.secondary,
+      surface: AppColors.darkSurface,
+      error: AppColors.error,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
+      onSurface: Colors.white,
+    ),
+    scaffoldBackgroundColor: AppColors.darkBackground,
+    textTheme: AppTypography.textTheme,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.darkSurface,
+      foregroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: false,
+    ),
+    cardTheme: CardThemeData(
+      color: AppColors.darkCard,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primaryLight,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.darkCard,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: AppColors.primaryLight, width: 2),
+      ),
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: AppColors.darkSurface,
+      selectedItemColor: AppColors.primaryLight,
+      unselectedItemColor: AppColors.textLight,
+      type: BottomNavigationBarType.fixed,
+      elevation: 8,
+    ),
+  );
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\theme\app_typography.dart ==========
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'app_colors.dart';
+
+class AppTypography {
+  static TextTheme get textTheme => TextTheme(
+    displayLarge: GoogleFonts.merriweather(
+      fontSize: 32,
+      fontWeight: FontWeight.bold,
+      color: AppColors.textPrimary,
+    ),
+    displayMedium: GoogleFonts.merriweather(
+      fontSize: 26,
+      fontWeight: FontWeight.bold,
+      color: AppColors.textPrimary,
+    ),
+    headlineLarge: GoogleFonts.merriweather(
+      fontSize: 22,
+      fontWeight: FontWeight.w700,
+      color: AppColors.textPrimary,
+    ),
+    headlineMedium: GoogleFonts.merriweather(
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: AppColors.textPrimary,
+    ),
+    titleLarge: GoogleFonts.lato(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: AppColors.textPrimary,
+    ),
+    titleMedium: GoogleFonts.lato(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      color: AppColors.textPrimary,
+    ),
+    bodyLarge: GoogleFonts.lato(
+      fontSize: 16,
+      fontWeight: FontWeight.normal,
+      color: AppColors.textPrimary,
+    ),
+    bodyMedium: GoogleFonts.lato(
+      fontSize: 14,
+      fontWeight: FontWeight.normal,
+      color: AppColors.textSecondary,
+    ),
+    bodySmall: GoogleFonts.lato(
+      fontSize: 12,
+      fontWeight: FontWeight.normal,
+      color: AppColors.textLight,
+    ),
+    labelLarge: GoogleFonts.lato(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: AppColors.surface,
+      letterSpacing: 0.5,
+    ),
+  );
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\utils\currency_utils.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\core\utils\date_utils.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\auth\domain\user_model.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\auth\presentation\login_screen.dart ==========
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../shared/widgets/app_drawer.dart';
+import '../../crm/contacts/presentation/contacts_screen.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _isLoading = false;
+
+  void _handleLogin() async {
+    setState(() => _isLoading = true);
+    // Simulate login delay
+    await Future.delayed(const Duration(seconds: 2));
+    setState(() => _isLoading = false);
+
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const MainShell()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.primary,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Top branding
+            Expanded(
+              flex: 2,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.agriculture,
+                        size: 60,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Meadowbrook ERP',
+                      style: GoogleFonts.merriweather(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Smart Farming & Business Management',
+                      style: GoogleFonts.lato(
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Login form
+            Expanded(
+              flex: 3,
+              child: Container(
+                padding: const EdgeInsets.all(28),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Welcome Back',
+                      style: GoogleFonts.merriweather(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Sign in to continue',
+                      style: GoogleFonts.lato(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Email field
+                    TextField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        hintText: 'Email address',
+                        prefixIcon: Icon(Icons.email_outlined),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Password field
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: _obscurePassword,
+                      decoration: InputDecoration(
+                        hintText: 'Password',
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                          ),
+                          onPressed: () => setState(
+                              () => _obscurePassword = !_obscurePassword),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+
+                    // Login button
+                    ElevatedButton(
+                      onPressed: _isLoading ? null : _handleLogin,
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text('Sign In'),
+                    ),
+
+                    const SizedBox(height: 16),
+                    Center(
+                      child: Text(
+                        'Forgot password? Contact your administrator',
+                        style: GoogleFonts.lato(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\crm\contacts\data\contact_repository.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\crm\contacts\domain\contact_model.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\crm\contacts\presentation\contacts_screen.dart ==========
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/constants/app_constants.dart';
+import 'contact_detail_screen.dart';
+
+class ContactsScreen extends StatefulWidget {
+  const ContactsScreen({super.key});
+
+  @override
+  State<ContactsScreen> createState() => _ContactsScreenState();
+}
+
+class _ContactsScreenState extends State<ContactsScreen> {
+  final _searchController = TextEditingController();
+  String _selectedType = 'All';
+
+  final List<Map<String, dynamic>> _contacts = [
+    {
+      'id': 1,
+      'name': 'James Kamau',
+      'phone': '+254 712 345 678',
+      'email': 'james@email.com',
+      'type': 'Farmer',
+      'county': 'Nakuru',
+    },
+    {
+      'id': 2,
+      'name': 'Mary Wanjiku',
+      'phone': '+254 723 456 789',
+      'email': 'mary@email.com',
+      'type': 'Buyer',
+      'county': 'Nairobi',
+    },
+    {
+      'id': 3,
+      'name': 'Peter Ochieng',
+      'phone': '+254 734 567 890',
+      'email': 'peter@email.com',
+      'type': 'Supplier',
+      'county': 'Kisumu',
+    },
+    {
+      'id': 4,
+      'name': 'Grace Muthoni',
+      'phone': '+254 745 678 901',
+      'email': 'grace@email.com',
+      'type': 'Farmer',
+      'county': 'Nyeri',
+    },
+    {
+      'id': 5,
+      'name': 'David Kipchoge',
+      'phone': '+254 756 789 012',
+      'email': 'david@email.com',
+      'type': 'Partner',
+      'county': 'Uasin Gishu',
+    },
+  ];
+
+  List<Map<String, dynamic>> get _filteredContacts {
+    return _contacts.where((c) {
+      final matchesSearch = c['name']
+          .toString()
+          .toLowerCase()
+          .contains(_searchController.text.toLowerCase());
+      final matchesType =
+          _selectedType == 'All' || c['type'] == _selectedType;
+      return matchesSearch && matchesType;
+    }).toList();
+  }
+
+  Color _typeColor(String type) {
+    switch (type) {
+      case 'Farmer': return AppColors.success;
+      case 'Buyer': return AppColors.info;
+      case 'Supplier': return AppColors.secondary;
+      case 'Partner': return AppColors.primaryLight;
+      default: return AppColors.textLight;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: Column(
+        children: [
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+            child: Column(
+              children: [
+                TextField(
+                  controller: _searchController,
+                  onChanged: (_) => setState(() {}),
+                  decoration: const InputDecoration(
+                    hintText: 'Search contacts...',
+                    prefixIcon: Icon(Icons.search),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: ['All', ...AppConstants.contactTypes].map((type) {
+                      final isSelected = _selectedType == type;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: FilterChip(
+                          label: Text(type),
+                          selected: isSelected,
+                          onSelected: (_) =>
+                              setState(() => _selectedType = type),
+                          selectedColor: AppColors.primary.withOpacity(0.15),
+                          checkmarkColor: AppColors.primary,
+                          labelStyle: GoogleFonts.lato(
+                            color: isSelected
+                                ? AppColors.primary
+                                : AppColors.textSecondary,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Row(
+              children: [
+                Text(
+                  '${_filteredContacts.length} contacts',
+                  style: GoogleFonts.lato(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  'Total: ${_contacts.length}',
+                  style: GoogleFonts.lato(
+                    color: AppColors.textLight,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: _filteredContacts.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.people_outline,
+                            size: 64, color: AppColors.textLight),
+                        const SizedBox(height: 12),
+                        Text(
+                          'No contacts found',
+                          style: GoogleFonts.lato(
+                            color: AppColors.textSecondary,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 8),
+                    itemCount: _filteredContacts.length,
+                    itemBuilder: (context, index) {
+                      final contact = _filteredContacts[index];
+                      return _ContactCard(
+                        contact: contact,
+                        typeColor: _typeColor(contact['type']),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  ContactDetailScreen(contact: contact),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showAddContactSheet(context),
+        backgroundColor: AppColors.primary,
+        icon: const Icon(Icons.person_add, color: Colors.white),
+        label: Text(
+          'Add Contact',
+          style: GoogleFonts.lato(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showAddContactSheet(BuildContext context) {
+    final nameController = TextEditingController();
+    final phoneController = TextEditingController();
+    final emailController = TextEditingController();
+    String selectedType = 'Farmer';
+    String selectedCounty = 'Nairobi';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'New Contact',
+                style: GoogleFonts.merriweather(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  hintText: 'Full name',
+                  prefixIcon: Icon(Icons.person_outline),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  hintText: 'Phone number',
+                  prefixIcon: Icon(Icons.phone_outlined),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  hintText: 'Email (optional)',
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: selectedType,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.category_outlined),
+                ),
+                items: AppConstants.contactTypes
+                    .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                    .toList(),
+                onChanged: (v) => setModalState(() => selectedType = v!),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: selectedCounty,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.location_on_outlined),
+                ),
+                items: AppConstants.kenyanCounties
+                    .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                    .toList(),
+                onChanged: (v) => setModalState(() => selectedCounty = v!),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (nameController.text.isNotEmpty) {
+                    setState(() {
+                      _contacts.add({
+                        'id': _contacts.length + 1,
+                        'name': nameController.text,
+                        'phone': phoneController.text,
+                        'email': emailController.text,
+                        'type': selectedType,
+                        'county': selectedCounty,
+                      });
+                    });
+                    Navigator.pop(context);
+                  }
+                },
+                child: const Text('Save Contact'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ContactCard extends StatelessWidget {
+  final Map<String, dynamic> contact;
+  final Color typeColor;
+  final VoidCallback onTap;
+
+  const _ContactCard({
+    required this.contact,
+    required this.typeColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: ListTile(
+        onTap: onTap,
+        leading: CircleAvatar(
+          backgroundColor: typeColor.withOpacity(0.15),
+          child: Text(
+            contact['name'][0].toUpperCase(),
+            style: GoogleFonts.merriweather(
+              color: typeColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        title: Text(
+          contact['name'],
+          style: GoogleFonts.lato(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          contact['phone'] ?? '',
+          style: GoogleFonts.lato(color: AppColors.textSecondary),
+        ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: typeColor.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                contact['type'],
+                style: GoogleFonts.lato(
+                  fontSize: 11,
+                  color: typeColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              contact['county'] ?? '',
+              style: GoogleFonts.lato(
+                fontSize: 11,
+                color: AppColors.textLight,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\crm\contacts\presentation\contact_detail_screen.dart ==========
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/app_colors.dart';
+
+class ContactDetailScreen extends StatelessWidget {
+  final Map<String, dynamic> contact;
+
+  const ContactDetailScreen({super.key, required this.contact});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: CustomScrollView(
+        slivers: [
+          // Header
+          SliverAppBar(
+            expandedHeight: 200,
+            pinned: true,
+            backgroundColor: AppColors.primary,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.primaryDark, AppColors.primary],
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 40),
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Colors.white24,
+                      child: Text(
+                        contact['name'][0].toUpperCase(),
+                        style: GoogleFonts.merriweather(
+                          fontSize: 32,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      contact['name'],
+                      style: GoogleFonts.merriweather(
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        contact['type'],
+                        style: GoogleFonts.lato(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Body
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Contact Info Card
+                  _SectionCard(
+                    title: 'Contact Information',
+                    child: Column(
+                      children: [
+                        _InfoRow(
+                          icon: Icons.phone_outlined,
+                          label: 'Phone',
+                          value: contact['phone'] ?? 'Not provided',
+                        ),
+                        const Divider(height: 1),
+                        _InfoRow(
+                          icon: Icons.email_outlined,
+                          label: 'Email',
+                          value: contact['email'] ?? 'Not provided',
+                        ),
+                        const Divider(height: 1),
+                        _InfoRow(
+                          icon: Icons.location_on_outlined,
+                          label: 'County',
+                          value: contact['county'] ?? 'Not provided',
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Quick Actions
+                  _SectionCard(
+                    title: 'Quick Actions',
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _ActionButton(
+                          icon: Icons.phone,
+                          label: 'Call',
+                          color: AppColors.success,
+                          onTap: () {},
+                        ),
+                        _ActionButton(
+                          icon: Icons.message,
+                          label: 'SMS',
+                          color: AppColors.info,
+                          onTap: () {},
+                        ),
+                        _ActionButton(
+                          icon: Icons.trending_up,
+                          label: 'New Lead',
+                          color: AppColors.secondary,
+                          onTap: () {},
+                        ),
+                        _ActionButton(
+                          icon: Icons.receipt,
+                          label: 'Invoice',
+                          color: AppColors.primaryLight,
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Activity / Notes
+                  _SectionCard(
+                    title: 'Notes',
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Text(
+                        contact['notes'] ?? 'No notes added yet.',
+                        style: GoogleFonts.lato(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Edit / Delete buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () {},
+                          icon: const Icon(Icons.edit_outlined),
+                          label: const Text('Edit Contact'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.primary,
+                            side: const BorderSide(color: AppColors.primary),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.delete_outline),
+                          label: const Text('Delete'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.error,
+                            side: const BorderSide(color: AppColors.error),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// â”€â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+class _SectionCard extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _SectionCard({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+            child: Text(
+              title,
+              style: GoogleFonts.merriweather(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+          const Divider(height: 1),
+          child,
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _InfoRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: AppColors.primary),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: GoogleFonts.lato(
+                  fontSize: 11,
+                  color: AppColors.textLight,
+                ),
+              ),
+              Text(
+                value,
+                style: GoogleFonts.lato(
+                  fontSize: 14,
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ActionButton({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 22),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: GoogleFonts.lato(
+                fontSize: 11,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\crm\invoices\data\invoice_repository.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\crm\invoices\domain\invoice_model.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\crm\invoices\presentation\invoices_screen.dart ==========
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/app_colors.dart';
+
+class InvoicesScreen extends StatefulWidget {
+  const InvoicesScreen({super.key});
+
+  @override
+  State<InvoicesScreen> createState() => _InvoicesScreenState();
+}
+
+class _InvoicesScreenState extends State<InvoicesScreen> {
+  String _selectedStatus = 'All';
+
+  final List<Map<String, dynamic>> _invoices = [
+    {
+      'id': 1,
+      'invoiceNumber': 'INV-001',
+      'clientName': 'James Kamau',
+      'clientPhone': '+254 712 345 678',
+      'amount': 150000.0,
+      'amountPaid': 150000.0,
+      'status': 'Paid',
+      'dueDate': '2024-03-15',
+      'notes': 'Maize supply payment',
+    },
+    {
+      'id': 2,
+      'invoiceNumber': 'INV-002',
+      'clientName': 'Mary Wanjiku',
+      'clientPhone': '+254 723 456 789',
+      'amount': 450000.0,
+      'amountPaid': 225000.0,
+      'status': 'Partial',
+      'dueDate': '2024-03-30',
+      'notes': 'Tea export advance payment',
+    },
+    {
+      'id': 3,
+      'invoiceNumber': 'INV-003',
+      'clientName': 'Peter Ochieng',
+      'clientPhone': '+254 734 567 890',
+      'amount': 80000.0,
+      'amountPaid': 0.0,
+      'status': 'Unpaid',
+      'dueDate': '2024-04-05',
+      'notes': 'Fertilizer order',
+    },
+    {
+      'id': 4,
+      'invoiceNumber': 'INV-004',
+      'clientName': 'Grace Muthoni',
+      'clientPhone': '+254 745 678 901',
+      'amount': 220000.0,
+      'amountPaid': 0.0,
+      'status': 'Overdue',
+      'dueDate': '2024-02-28',
+      'notes': 'Dairy products delivery',
+    },
+    {
+      'id': 5,
+      'invoiceNumber': 'INV-005',
+      'clientName': 'David Kipchoge',
+      'clientPhone': '+254 756 789 012',
+      'amount': 320000.0,
+      'amountPaid': 320000.0,
+      'status': 'Paid',
+      'dueDate': '2024-03-10',
+      'notes': 'Avocado export batch 1',
+    },
+  ];
+
+  final List<String> _statuses = [
+    'All', 'Paid', 'Unpaid', 'Partial', 'Overdue'
+  ];
+
+  List<Map<String, dynamic>> get _filteredInvoices {
+    return _invoices.where((inv) {
+      return _selectedStatus == 'All' || inv['status'] == _selectedStatus;
+    }).toList();
+  }
+
+  Color _statusColor(String status) {
+    switch (status) {
+      case 'Paid': return AppColors.success;
+      case 'Unpaid': return AppColors.info;
+      case 'Partial': return AppColors.secondary;
+      case 'Overdue': return AppColors.error;
+      default: return AppColors.textLight;
+    }
+  }
+
+  double get _totalAmount =>
+      _invoices.fold(0, (sum, inv) => sum + (inv['amount'] as double));
+  double get _totalPaid =>
+      _invoices.fold(0, (sum, inv) => sum + (inv['amountPaid'] as double));
+  double get _totalOutstanding => _totalAmount - _totalPaid;
+
+  String _formatAmount(double amount) {
+    return 'Ksh ${amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.white,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _SummaryCard(
+                        label: 'Total Invoiced',
+                        value: _formatAmount(_totalAmount),
+                        color: AppColors.primary,
+                        icon: Icons.receipt_long,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _SummaryCard(
+                        label: 'Collected',
+                        value: _formatAmount(_totalPaid),
+                        color: AppColors.success,
+                        icon: Icons.check_circle_outline,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _SummaryCard(
+                        label: 'Outstanding',
+                        value: _formatAmount(_totalOutstanding),
+                        color: AppColors.error,
+                        icon: Icons.pending_outlined,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: _statuses.map((status) {
+                  final isSelected = _selectedStatus == status;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: FilterChip(
+                      label: Text(status),
+                      selected: isSelected,
+                      onSelected: (_) =>
+                          setState(() => _selectedStatus = status),
+                      selectedColor:
+                          _statusColor(status).withOpacity(0.15),
+                      checkmarkColor: _statusColor(status),
+                      labelStyle: GoogleFonts.lato(
+                        color: isSelected
+                            ? _statusColor(status)
+                            : AppColors.textSecondary,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          Expanded(
+            child: _filteredInvoices.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.receipt_outlined,
+                            size: 64, color: AppColors.textLight),
+                        const SizedBox(height: 12),
+                        Text(
+                          'No invoices found',
+                          style: GoogleFonts.lato(
+                            color: AppColors.textSecondary,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _filteredInvoices.length,
+                    itemBuilder: (context, index) {
+                      final invoice = _filteredInvoices[index];
+                      return _InvoiceCard(
+                        invoice: invoice,
+                        statusColor: _statusColor(invoice['status']),
+                        formatAmount: _formatAmount,
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showAddInvoiceSheet(context),
+        backgroundColor: AppColors.primary,
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: Text(
+          'New Invoice',
+          style: GoogleFonts.lato(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showAddInvoiceSheet(BuildContext context) {
+    final clientController = TextEditingController();
+    final phoneController = TextEditingController();
+    final amountController = TextEditingController();
+    final notesController = TextEditingController();
+    String selectedStatus = 'Unpaid';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'New Invoice',
+                style: GoogleFonts.merriweather(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: clientController,
+                decoration: const InputDecoration(
+                  hintText: 'Client name',
+                  prefixIcon: Icon(Icons.person_outline),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  hintText: 'Phone number',
+                  prefixIcon: Icon(Icons.phone_outlined),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: amountController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  hintText: 'Amount (Ksh)',
+                  prefixIcon: Icon(Icons.attach_money),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: notesController,
+                decoration: const InputDecoration(
+                  hintText: 'Notes (optional)',
+                  prefixIcon: Icon(Icons.notes_outlined),
+                ),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: selectedStatus,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.flag_outlined),
+                ),
+                items: ['Unpaid', 'Partial', 'Paid']
+                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                    .toList(),
+                onChanged: (v) => setModalState(() => selectedStatus = v!),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (clientController.text.isNotEmpty) {
+                    setState(() {
+                      _invoices.add({
+                        'id': _invoices.length + 1,
+                        'invoiceNumber':
+                            'INV-00${_invoices.length + 1}',
+                        'clientName': clientController.text,
+                        'clientPhone': phoneController.text,
+                        'amount':
+                            double.tryParse(amountController.text) ?? 0.0,
+                        'amountPaid': 0.0,
+                        'status': selectedStatus,
+                        'dueDate': '',
+                        'notes': notesController.text,
+                      });
+                    });
+                    Navigator.pop(context);
+                  }
+                },
+                child: const Text('Save Invoice'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InvoiceCard extends StatelessWidget {
+  final Map<String, dynamic> invoice;
+  final Color statusColor;
+  final String Function(double) formatAmount;
+
+  const _InvoiceCard({
+    required this.invoice,
+    required this.statusColor,
+    required this.formatAmount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final double amount = invoice['amount'] as double;
+    final double paid = invoice['amountPaid'] as double;
+    final double progress = amount > 0 ? paid / amount : 0;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.receipt,
+                      color: AppColors.primary, size: 20),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        invoice['invoiceNumber'],
+                        style: GoogleFonts.lato(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      Text(
+                        invoice['clientName'],
+                        style: GoogleFonts.lato(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    invoice['status'],
+                    style: GoogleFonts.lato(
+                      fontSize: 11,
+                      color: statusColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: progress,
+                backgroundColor: AppColors.cardBg,
+                valueColor: AlwaysStoppedAnimation<Color>(statusColor),
+                minHeight: 6,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Paid: ${formatAmount(paid)}',
+                  style: GoogleFonts.lato(
+                    fontSize: 12,
+                    color: AppColors.success,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  'Total: ${formatAmount(amount)}',
+                  style: GoogleFonts.merriweather(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+            if (invoice['notes'] != null &&
+                invoice['notes'].toString().isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                invoice['notes'],
+                style: GoogleFonts.lato(
+                  fontSize: 11,
+                  color: AppColors.textLight,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SummaryCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _SummaryCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 18),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: GoogleFonts.merriweather(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          Text(
+            label,
+            style: GoogleFonts.lato(
+              fontSize: 10,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\crm\leads\data\leads_repository.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\crm\leads\domain\lead_model.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\crm\leads\presentation\leads_screen.dart ==========
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/constants/app_constants.dart';
+
+class LeadsScreen extends StatefulWidget {
+  const LeadsScreen({super.key});
+
+  @override
+  State<LeadsScreen> createState() => _LeadsScreenState();
+}
+
+class _LeadsScreenState extends State<LeadsScreen> {
+  String _selectedStatus = 'All';
+
+  final List<Map<String, dynamic>> _leads = [
+    {
+      'id': 1,
+      'title': 'Maize Supply Contract',
+      'contactName': 'James Kamau',
+      'phone': '+254 712 345 678',
+      'status': 'Qualified',
+      'value': 150000.0,
+      'notes': 'Interested in bulk maize supply for next season',
+    },
+    {
+      'id': 2,
+      'title': 'Tea Export Deal',
+      'contactName': 'Mary Wanjiku',
+      'phone': '+254 723 456 789',
+      'status': 'Proposal',
+      'value': 450000.0,
+      'notes': 'Exporting to UK market, needs certification',
+    },
+    {
+      'id': 3,
+      'title': 'Fertilizer Partnership',
+      'contactName': 'Peter Ochieng',
+      'phone': '+254 734 567 890',
+      'status': 'New',
+      'value': 80000.0,
+      'notes': 'New supplier partnership inquiry',
+    },
+    {
+      'id': 4,
+      'title': 'Dairy Products Distribution',
+      'contactName': 'Grace Muthoni',
+      'phone': '+254 745 678 901',
+      'status': 'Won',
+      'value': 220000.0,
+      'notes': 'Signed contract for milk distribution',
+    },
+    {
+      'id': 5,
+      'title': 'Avocado Export',
+      'contactName': 'David Kipchoge',
+      'phone': '+254 756 789 012',
+      'status': 'Contacted',
+      'value': 320000.0,
+      'notes': 'Exploring export options to Middle East',
+    },
+  ];
+
+  List<Map<String, dynamic>> get _filteredLeads {
+    return _leads.where((l) {
+      return _selectedStatus == 'All' || l['status'] == _selectedStatus;
+    }).toList();
+  }
+
+  Color _statusColor(String status) {
+    switch (status) {
+      case 'New': return AppColors.info;
+      case 'Contacted': return AppColors.secondary;
+      case 'Qualified': return AppColors.primaryLight;
+      case 'Proposal': return Colors.purple;
+      case 'Won': return AppColors.success;
+      case 'Lost': return AppColors.error;
+      default: return AppColors.textLight;
+    }
+  }
+
+  double get _totalValue => _filteredLeads.fold(
+      0, (sum, lead) => sum + (lead['value'] as double));
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.primary, AppColors.primaryLight],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Pipeline Value',
+                        style: GoogleFonts.lato(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
+                      ),
+                      Text(
+                        'Ksh ${_totalValue.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
+                        style: GoogleFonts.merriweather(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${_filteredLeads.length} leads',
+                      style: GoogleFonts.lato(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      '${_leads.where((l) => l['status'] == 'Won').length} won',
+                      style: GoogleFonts.lato(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: ['All', ...AppConstants.leadStatuses].map((status) {
+                  final isSelected = _selectedStatus == status;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: FilterChip(
+                      label: Text(status),
+                      selected: isSelected,
+                      onSelected: (_) =>
+                          setState(() => _selectedStatus = status),
+                      selectedColor:
+                          _statusColor(status).withOpacity(0.15),
+                      checkmarkColor: _statusColor(status),
+                      labelStyle: GoogleFonts.lato(
+                        color: isSelected
+                            ? _statusColor(status)
+                            : AppColors.textSecondary,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          Expanded(
+            child: _filteredLeads.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.trending_up,
+                            size: 64, color: AppColors.textLight),
+                        const SizedBox(height: 12),
+                        Text(
+                          'No leads found',
+                          style: GoogleFonts.lato(
+                            color: AppColors.textSecondary,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _filteredLeads.length,
+                    itemBuilder: (context, index) {
+                      final lead = _filteredLeads[index];
+                      return _LeadCard(
+                        lead: lead,
+                        statusColor: _statusColor(lead['status']),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showAddLeadSheet(context),
+        backgroundColor: AppColors.primary,
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: Text(
+          'Add Lead',
+          style: GoogleFonts.lato(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showAddLeadSheet(BuildContext context) {
+    final titleController = TextEditingController();
+    final contactController = TextEditingController();
+    final phoneController = TextEditingController();
+    final valueController = TextEditingController();
+    String selectedStatus = 'New';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'New Lead',
+                style: GoogleFonts.merriweather(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  hintText: 'Lead title',
+                  prefixIcon: Icon(Icons.trending_up_outlined),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: contactController,
+                decoration: const InputDecoration(
+                  hintText: 'Contact name',
+                  prefixIcon: Icon(Icons.person_outline),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  hintText: 'Phone number',
+                  prefixIcon: Icon(Icons.phone_outlined),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: valueController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  hintText: 'Estimated value (Ksh)',
+                  prefixIcon: Icon(Icons.attach_money),
+                ),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: selectedStatus,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.flag_outlined),
+                ),
+                items: AppConstants.leadStatuses
+                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                    .toList(),
+                onChanged: (v) => setModalState(() => selectedStatus = v!),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (titleController.text.isNotEmpty) {
+                    setState(() {
+                      _leads.add({
+                        'id': _leads.length + 1,
+                        'title': titleController.text,
+                        'contactName': contactController.text,
+                        'phone': phoneController.text,
+                        'status': selectedStatus,
+                        'value':
+                            double.tryParse(valueController.text) ?? 0.0,
+                        'notes': '',
+                      });
+                    });
+                    Navigator.pop(context);
+                  }
+                },
+                child: const Text('Save Lead'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LeadCard extends StatelessWidget {
+  final Map<String, dynamic> lead;
+  final Color statusColor;
+
+  const _LeadCard({required this.lead, required this.statusColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    lead['title'],
+                    style: GoogleFonts.lato(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    lead['status'],
+                    style: GoogleFonts.lato(
+                      fontSize: 11,
+                      color: statusColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.person_outline,
+                    size: 14, color: AppColors.textLight),
+                const SizedBox(width: 4),
+                Text(
+                  lead['contactName'],
+                  style: GoogleFonts.lato(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Icon(Icons.phone_outlined,
+                    size: 14, color: AppColors.textLight),
+                const SizedBox(width: 4),
+                Text(
+                  lead['phone'],
+                  style: GoogleFonts.lato(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    lead['notes'],
+                    style: GoogleFonts.lato(
+                      fontSize: 12,
+                      color: AppColors.textLight,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Text(
+                  'Ksh ${(lead['value'] as double).toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
+                  style: GoogleFonts.merriweather(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\farm\crops\domain\crop_model.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\farm\crops\presentation\crops_screen.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\farm\dashboard\presentation\farm_dashboard_screen.dart ==========
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/app_colors.dart';
+
+class FarmDashboardScreen extends StatefulWidget {
+  const FarmDashboardScreen({super.key});
+
+  @override
+  State<FarmDashboardScreen> createState() => _FarmDashboardScreenState();
+}
+
+class _FarmDashboardScreenState extends State<FarmDashboardScreen> {
+  final Map<String, dynamic> _farmStats = {
+    'totalAcreage': 847,
+    'activecrops': 6,
+    'livestock': 234,
+    'pendingTasks': 12,
+  };
+
+  final List<Map<String, dynamic>> _crops = [
+    {
+      'name': 'Winter Wheat',
+      'acreage': 240,
+      'stage': 'Tillering',
+      'health': 92,
+      'color': 0xFFE9A825,
+    },
+    {
+      'name': 'Maize',
+      'acreage': 180,
+      'stage': 'V8 Stage',
+      'health': 88,
+      'color': 0xFF52B788,
+    },
+    {
+      'name': 'Soybeans',
+      'acreage': 120,
+      'stage': 'R3 Pod Set',
+      'health': 95,
+      'color': 0xFF4895EF,
+    },
+    {
+      'name': 'Tea',
+      'acreage': 307,
+      'stage': '2nd Cutting',
+      'health': 91,
+      'color': 0xFF2D6A4F,
+    },
+  ];
+
+  final List<Map<String, dynamic>> _livestock = [
+    {'type': 'Cattle', 'count': 145, 'health': 98, 'icon': 'ðŸ„'},
+    {'type': 'Sheep', 'count': 67, 'health': 95, 'icon': 'ðŸ‘'},
+    {'type': 'Chickens', 'count': 320, 'health': 100, 'icon': 'ðŸ”'},
+    {'type': 'Pigs', 'count': 42, 'health': 97, 'icon': 'ðŸ–'},
+  ];
+
+  final List<Map<String, dynamic>> _tasks = [
+    {'title': 'Irrigate North Field', 'time': '6:00 AM', 'done': true},
+    {'title': 'Feed livestock', 'time': '7:30 AM', 'done': true},
+    {'title': 'Check fence line - East', 'time': '10:00 AM', 'done': false},
+    {'title': 'Equipment maintenance', 'time': '2:00 PM', 'done': false},
+    {'title': 'Soil testing - South Field', 'time': '3:30 PM', 'done': false},
+  ];
+
+  final List<Map<String, dynamic>> _weather = [
+    {'day': 'Mon', 'temp': 72, 'icon': Icons.wb_sunny},
+    {'day': 'Tue', 'temp': 68, 'icon': Icons.cloud},
+    {'day': 'Wed', 'temp': 65, 'icon': Icons.grain},
+    {'day': 'Thu', 'temp': 70, 'icon': Icons.wb_cloudy},
+    {'day': 'Fri', 'temp': 74, 'icon': Icons.wb_sunny},
+    {'day': 'Sat', 'temp': 71, 'icon': Icons.cloud},
+    {'day': 'Sun', 'temp': 63, 'icon': Icons.grain},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(const Duration(seconds: 1));
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildFarmHeader(),
+              const SizedBox(height: 16),
+              _buildStatsRow(),
+              const SizedBox(height: 20),
+              _buildWeatherSection(),
+              const SizedBox(height: 20),
+              _buildSectionTitle('Crop Health Index'),
+              const SizedBox(height: 10),
+              _buildCropHealth(),
+              const SizedBox(height: 20),
+              _buildSectionTitle('Livestock Summary'),
+              const SizedBox(height: 10),
+              _buildLivestockGrid(),
+              const SizedBox(height: 20),
+              _buildSectionTitle("Today's Tasks"),
+              const SizedBox(height: 10),
+              _buildTasksList(),
+              const SizedBox(height: 80),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddTaskSheet(context),
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.add_task, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildFarmHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.primaryDark, AppColors.primary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Meadowbrook Farm',
+                  style: GoogleFonts.merriweather(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Kenya â€¢ ${_farmStats['totalAcreage']} acres',
+                  style: GoogleFonts.lato(
+                    color: Colors.white70,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.thermostat,
+                      color: Colors.white70, size: 16),
+                  Text(
+                    '72Â°F',
+                    style: GoogleFonts.lato(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                'Partly Cloudy',
+                style: GoogleFonts.lato(
+                  color: Colors.white70,
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatsRow() {
+    final stats = [
+      {
+        'label': 'Acreage',
+        'value': '${_farmStats['totalAcreage']}',
+        'unit': 'acres',
+        'icon': Icons.landscape,
+        'color': AppColors.primary,
+      },
+      {
+        'label': 'Crops',
+        'value': '${_farmStats['activecrops']}',
+        'unit': 'varieties',
+        'icon': Icons.grass,
+        'color': AppColors.success,
+      },
+      {
+        'label': 'Livestock',
+        'value': '${_farmStats['livestock']}',
+        'unit': 'head',
+        'icon': Icons.pets,
+        'color': AppColors.secondary,
+      },
+      {
+        'label': 'Tasks',
+        'value': '${_farmStats['pendingTasks']}',
+        'unit': 'pending',
+        'icon': Icons.task_alt,
+        'color': AppColors.info,
+      },
+    ];
+
+    return Row(
+      children: stats.map((stat) {
+        return Expanded(
+          child: Container(
+            margin: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(stat['icon'] as IconData,
+                    color: stat['color'] as Color, size: 20),
+                const SizedBox(height: 6),
+                Text(
+                  stat['value'] as String,
+                  style: GoogleFonts.merriweather(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                Text(
+                  stat['unit'] as String,
+                  style: GoogleFonts.lato(
+                    fontSize: 10,
+                    color: AppColors.textLight,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildWeatherSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('7-Day Forecast'),
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: _weather.map((w) {
+              return Column(
+                children: [
+                  Text(
+                    w['day'],
+                    style: GoogleFonts.lato(
+                      fontSize: 11,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Icon(w['icon'] as IconData,
+                      color: AppColors.secondary, size: 20),
+                  const SizedBox(height: 6),
+                  Text(
+                    '${w['temp']}Â°',
+                    style: GoogleFonts.lato(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCropHealth() {
+    return Column(
+      children: _crops.map((crop) {
+        final color = Color(crop['color'] as int);
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          crop['name'],
+                          style: GoogleFonts.lato(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          '${crop['health']}% health',
+                          style: GoogleFonts.lato(
+                            fontSize: 12,
+                            color: color,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${crop['stage']} â€¢ ${crop['acreage']} acres',
+                      style: GoogleFonts.lato(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: (crop['health'] as int) / 100,
+                        backgroundColor: color.withOpacity(0.1),
+                        valueColor: AlwaysStoppedAnimation<Color>(color),
+                        minHeight: 5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildLivestockGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 1.6,
+      ),
+      itemCount: _livestock.length,
+      itemBuilder: (context, index) {
+        final animal = _livestock[index];
+        return Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Text(
+                animal['icon'],
+                style: const TextStyle(fontSize: 28),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      animal['type'],
+                      style: GoogleFonts.lato(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                    Text(
+                      '${animal['count']} head',
+                      style: GoogleFonts.lato(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.favorite,
+                            size: 10, color: AppColors.success),
+                        const SizedBox(width: 2),
+                        Text(
+                          '${animal['health']}%',
+                          style: GoogleFonts.lato(
+                            fontSize: 11,
+                            color: AppColors.success,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTasksList() {
+    return Column(
+      children: _tasks.map((task) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: ListTile(
+            leading: Checkbox(
+              value: task['done'] as bool,
+              activeColor: AppColors.primary,
+              onChanged: (val) {
+                setState(() => task['done'] = val);
+              },
+            ),
+            title: Text(
+              task['title'],
+              style: GoogleFonts.lato(
+                decoration: task['done'] as bool
+                    ? TextDecoration.lineThrough
+                    : null,
+                color: task['done'] as bool
+                    ? AppColors.textLight
+                    : AppColors.textPrimary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            trailing: Text(
+              task['time'],
+              style: GoogleFonts.lato(
+                fontSize: 12,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.merriweather(
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+        color: AppColors.textPrimary,
+      ),
+    );
+  }
+
+  void _showAddTaskSheet(BuildContext context) {
+    final taskController = TextEditingController();
+    final timeController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 20,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'New Task',
+              style: GoogleFonts.merriweather(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: taskController,
+              decoration: const InputDecoration(
+                hintText: 'Task description',
+                prefixIcon: Icon(Icons.task_alt_outlined),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: timeController,
+              decoration: const InputDecoration(
+                hintText: 'Time (e.g. 9:00 AM)',
+                prefixIcon: Icon(Icons.access_time),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                if (taskController.text.isNotEmpty) {
+                  setState(() {
+                    _tasks.add({
+                      'title': taskController.text,
+                      'time': timeController.text,
+                      'done': false,
+                    });
+                  });
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Add Task'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\farm\equipment\domain\equipment_model.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\farm\equipment\presentation\equipment_screen.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\farm\finances\domain\finance_model.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\farm\finances\presentation\finances_screen.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\farm\livestock\domain\livestock_model.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\features\farm\livestock\presentation\livestock_screen.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\shared\services\connectivity_service.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\shared\widgets\app_drawer.dart ==========
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_colors.dart';
+import '../../features/crm/contacts/presentation/contacts_screen.dart';
+import '../../features/crm/leads/presentation/leads_screen.dart';
+import '../../features/crm/invoices/presentation/invoices_screen.dart';
+import '../../features/farm/dashboard/presentation/farm_dashboard_screen.dart';
+import '../../features/auth/presentation/login_screen.dart';
+
+class MainShell extends StatefulWidget {
+  const MainShell({super.key});
+
+  @override
+  State<MainShell> createState() => _MainShellState();
+}
+
+class _MainShellState extends State<MainShell> {
+  int _selectedIndex = 0;
+
+  final List<_NavItem> _navItems = [
+    _NavItem(
+      label: 'Contacts',
+      icon: Icons.people_outline,
+      activeIcon: Icons.people,
+      screen: const ContactsScreen(),
+    ),
+    _NavItem(
+      label: 'Leads',
+      icon: Icons.trending_up_outlined,
+      activeIcon: Icons.trending_up,
+      screen: const LeadsScreen(),
+    ),
+    _NavItem(
+      label: 'Invoices',
+      icon: Icons.receipt_outlined,
+      activeIcon: Icons.receipt,
+      screen: const InvoicesScreen(),
+    ),
+    _NavItem(
+      label: 'Farm',
+      icon: Icons.agriculture_outlined,
+      activeIcon: Icons.agriculture,
+      screen: const FarmDashboardScreen(),
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            const Icon(Icons.agriculture, color: Colors.white, size: 22),
+            const SizedBox(width: 8),
+            Text(
+              'Meadowbrook ERP',
+              style: GoogleFonts.merriweather(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          // Sync indicator
+          IconButton(
+            icon: const Icon(Icons.sync, color: Colors.white),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Syncing data...')),
+              );
+            },
+          ),
+          // Profile
+          PopupMenuButton(
+            icon: const CircleAvatar(
+              backgroundColor: Colors.white24,
+              child: Icon(Icons.person, color: Colors.white, size: 20),
+            ),
+            itemBuilder: (_) => [
+              PopupMenuItem(
+                child: const Row(
+                  children: [
+                    Icon(Icons.settings_outlined),
+                    SizedBox(width: 8),
+                    Text('Settings'),
+                  ],
+                ),
+                onTap: () {},
+              ),
+              PopupMenuItem(
+                child: const Row(
+                  children: [
+                    Icon(Icons.logout, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text('Logout', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  );
+                },
+              ),
+            ],
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+
+      // Drawer for desktop / tablet
+      drawer: Drawer(
+        child: Column(
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(color: AppColors.primary),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const CircleAvatar(
+                    radius: 28,
+                    backgroundColor: Colors.white24,
+                    child: Icon(Icons.person, color: Colors.white, size: 28),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Farm Manager',
+                    style: GoogleFonts.merriweather(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    'admin@meadowbrook.ke',
+                    style: GoogleFonts.lato(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // CRM Section
+            _DrawerSectionHeader(title: 'CRM'),
+            ..._navItems.sublist(0, 3).asMap().entries.map((e) =>
+              _DrawerNavItem(
+                item: e.value,
+                isSelected: _selectedIndex == e.key,
+                onTap: () {
+                  setState(() => _selectedIndex = e.key);
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+
+            const Divider(),
+
+            // Farm Section
+            _DrawerSectionHeader(title: 'Farm Management'),
+            _DrawerNavItem(
+              item: _navItems[3],
+              isSelected: _selectedIndex == 3,
+              onTap: () {
+                setState(() => _selectedIndex = 3);
+                Navigator.pop(context);
+              },
+            ),
+
+            const Spacer(),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: Text(
+                'Version 1.0.0',
+                style: GoogleFonts.lato(
+                  color: AppColors.textSecondary,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      body: _navItems[_selectedIndex].screen,
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) => setState(() => _selectedIndex = index),
+        items: _navItems
+            .map((item) => BottomNavigationBarItem(
+                  icon: Icon(item.icon),
+                  activeIcon: Icon(item.activeIcon),
+                  label: item.label,
+                ))
+            .toList(),
+      ),
+    );
+  }
+}
+
+// â”€â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+class _NavItem {
+  final String label;
+  final IconData icon;
+  final IconData activeIcon;
+  final Widget screen;
+
+  _NavItem({
+    required this.label,
+    required this.icon,
+    required this.activeIcon,
+    required this.screen,
+  });
+}
+
+class _DrawerSectionHeader extends StatelessWidget {
+  final String title;
+  const _DrawerSectionHeader({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Text(
+        title.toUpperCase(),
+        style: GoogleFonts.lato(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textLight,
+          letterSpacing: 1.2,
+        ),
+      ),
+    );
+  }
+}
+
+class _DrawerNavItem extends StatelessWidget {
+  final _NavItem item;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _DrawerNavItem({
+    required this.item,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(
+        isSelected ? item.activeIcon : item.icon,
+        color: isSelected ? AppColors.primary : AppColors.textSecondary,
+      ),
+      title: Text(
+        item.label,
+        style: GoogleFonts.lato(
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          color: isSelected ? AppColors.primary : AppColors.textPrimary,
+        ),
+      ),
+      selected: isSelected,
+      selectedTileColor: AppColors.primary.withOpacity(0.08),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      onTap: onTap,
+    );
+  }
+}
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\shared\widgets\stat_card.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\lib\shared\widgets\sync_indicator.dart ==========
+
+========== C:\Users\Admin\Desktop\Application_Projects\farm_app_thomas\test\widget_test.dart ==========
+// This is a basic Flutter widget test.
+//
+// To perform an interaction with a widget in your test, use the WidgetTester
+// utility in the flutter_test package. For example, you can send tap and scroll
+// gestures. You can also use WidgetTester to find child widgets in the widget
+// tree, read text, and verify that the values of widget properties are correct.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:farm_app_thomas/main.dart';
+
+void main() {
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const MyApp());
+
+    // Verify that our counter starts at 0.
+    expect(find.text('0'), findsOneWidget);
+    expect(find.text('1'), findsNothing);
+
+    // Tap the '+' icon and trigger a frame.
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pump();
+
+    // Verify that our counter has incremented.
+    expect(find.text('0'), findsNothing);
+    expect(find.text('1'), findsOneWidget);
+  });
+}
