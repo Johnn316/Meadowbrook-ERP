@@ -1,17 +1,23 @@
-# farm_app_thomas
+# Meadowbrook ERP
 
-A new Flutter project.
+A **comprehensive Enterprise Resource Planning (ERP)** application built with Flutter. Handles contacts, invoicing, leads management, and farm operations with a clean, intuitive interface.
 
-## Getting Started
+## 🎯 Features
 
-This project is a starting point for a Flutter application.
+- **Contact Management** — CRM-style customer and vendor tracking
+- **Invoice System** — Create, track, and manage invoices
+- **Leads Pipeline** — Sales pipeline and lead tracking
+- **Farm Management** — Agricultural operations and resource tracking
+- **Multi-Provider Architecture** — Efficient state management using Provider pattern
+- **Database Integration** — SQLite for local data persistence
+- **Responsive UI** — Works on phone, tablet, and desktop
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠 Tech Stack
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- **Framework:** Flutter (Dart)
+- **State Management:** Provider (MultiNotifierProvider)
+- **Database:** SQLite (local persistence) or Firebase (cloud optional)
+- **UI:** Material Design 3
+- **Backend:** Optional Firebase integration
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📁 Project Structure
