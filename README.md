@@ -10,6 +10,37 @@ offline-first mobile ERP, built around Kenyan agribusiness — KES currency, all
 
 ---
 
+## Project status
+
+**Phase 1 scope delivered per client requirements.** Development is currently
+paused pending the client's direction on the next phase.
+
+Delivered and working:
+
+- **Contacts** — create, edit, delete, search by name, filter by contact type;
+  call and SMS hand-off from the detail screen
+- **Leads** — create, edit, delete, search, filter by pipeline stage, change
+  stage, running pipeline value
+- **Invoices** — create, edit, delete, filter by status, record part or full
+  payment, automatic non-repeating invoice numbers, A4 PDF export via the
+  system share sheet
+- **Farms** — create, edit, delete, search by name or county, with per-farm
+  crops, livestock, equipment, and income/expense tracking
+- **Weather** — live conditions and a 7-day forecast per farm, resolved from
+  the farm's county
+- **Dashboard** — contact, lead, invoice, and farm totals with invoiced,
+  collected, and outstanding figures; pull to refresh
+- **Data portability** — XML export and import for contacts, leads, and
+  invoices, individually or together
+- **Local storage** — SQLite with versioned schema migrations, working fully
+  offline apart from the weather panel
+- **Theming** — light and dark modes, persisted between launches
+
+Verified on Android: `flutter analyze` reports no issues and a debug APK
+builds. Items still open are listed under [Known gaps](#known-gaps) below.
+
+---
+
 ## What it actually does
 
 ### CRM
