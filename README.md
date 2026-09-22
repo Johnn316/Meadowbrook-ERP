@@ -4,10 +4,6 @@ A Flutter app that bundles a small CRM and a farm-management module into one
 offline-first mobile ERP, built around Kenyan agribusiness — KES currency, all
 47 counties, and local crop/livestock lists baked into the constants.
 
-> **This is a learning project.** It's a portfolio/practice build, not a
-> production system. There's no authentication, no backend, and no multi-user
-> support — everything lives in a local SQLite file on the device.
-
 ---
 
 ## Project status
